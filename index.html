@@ -113,6 +113,117 @@ button, input { font-family: inherit; }
   .split-view { grid-template-columns: 1fr; }
   .search-block, .setup-form { width: 260px; }
 }
+
+/* ---------------- STORE CONDITION ---------------- */
+
+.condition-panel {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px; margin-top: 16px;
+}
+
+.condition-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 32px;
+  margin-top: 10px;
+}
+
+.condition-item { display: flex; flex-direction: column; gap: 6px; }
+
+.condition-item-label {
+  font-size: 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: baseline;
+}
+
+.condition-item-label .val {
+  font-size: 13px; font-weight: 700; color: var(--accent);
+}
+
+.condition-item-sub { font-size: 11px; color: var(--text-secondary); }
+
+.slider-input {
+  width: 100%; accent-color: var(--accent); height: 4px;
+}
+
+.station-row { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.station-input { flex: 1; border: none; outline: none; padding: 8px 10px; font-size: 13px; }
+.station-btn {
+  border: none; background: var(--accent); color: #fff; font-size: 11px; font-weight: 600;
+  padding: 8px 14px; cursor: pointer;
+}
+.station-btn:hover { background: #14201A; }
+.station-btn:disabled { background: #999; cursor: default; }
+
+.parking-input {
+  border: 1px solid var(--border); border-radius: var(--radius); outline: none;
+  padding: 8px 10px; font-size: 13px; width: 120px;
+}
+
+.run-diagnosis-btn {
+  margin-top: 18px; border: none; background: var(--accent); color: #fff;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+  padding: 11px 22px; cursor: pointer; border-radius: var(--radius);
+}
+.run-diagnosis-btn:hover { background: #14201A; }
+.run-diagnosis-btn:disabled { background: #999; cursor: default; }
+
+/* ---------------- STORE HEALTH ---------------- */
+
+.health-panel {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; margin-top: 16px;
+  display: flex; align-items: center; gap: 28px;
+}
+
+.health-score-block { display: flex; align-items: baseline; gap: 10px; }
+.health-score-num { font-size: 40px; font-weight: 700; }
+.health-score-label { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.5px; }
+
+.health-grade {
+  width: 56px; height: 56px; border: 2px solid var(--accent); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 700; color: var(--accent);
+}
+
+.health-breakdown { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12px; color: var(--text-secondary); }
+.health-breakdown b { color: var(--text-primary); }
+
+/* ---------------- DIAGNOSIS ---------------- */
+
+.diagnosis-panel {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; margin-top: 16px;
+}
+
+.diagnosis-summary { font-size: 13px; line-height: 1.7; margin: 10px 0 16px 0; }
+
+.diagnosis-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.diagnosis-columns ul { margin: 6px 0 0 0; padding-left: 18px; font-size: 13px; line-height: 1.8; }
+
+.priority-list { margin-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+
+.priority-item {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 14px; display: flex; gap: 14px; align-items: flex-start;
+}
+.priority-rank { font-size: 20px; font-weight: 700; color: var(--accent); min-width: 28px; }
+.priority-body .ptitle { font-size: 13px; font-weight: 700; }
+.priority-body .pcategory {
+  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  color: #fff; background: var(--accent); padding: 2px 6px; border-radius: 2px; margin-left: 8px;
+}
+.priority-body .preason, .priority-body .paction {
+  font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.6;
+}
+.priority-body .paction b { color: var(--text-primary); }
+
+.confirm-note {
+  margin-top: 16px; font-size: 11px; color: var(--warning); border-top: 1px dashed var(--border);
+  padding-top: 10px; line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .condition-grid, .diagnosis-columns { grid-template-columns: 1fr; }
+  .health-panel { flex-wrap: wrap; }
+}
 </style>
 </head>
 <body>
@@ -124,7 +235,7 @@ button, input { font-family: inherit; }
     </div>
 
     <form class="search-block" id="searchForm" autocomplete="off" hidden>
-      <input type="text" id="searchInput" class="search-input" placeholder="주소 검색 (예: 서울 강남구 논현동 ...)" />
+      <input type="text" id="searchInput" class="search-input" placeholder="도로명 주소 검색 (예: 서울 강남구 강남대로 396)" />
       <button type="submit" class="search-btn" id="searchBtn">SEARCH</button>
     </form>
   </header>
@@ -152,7 +263,7 @@ button, input { font-family: inherit; }
     <!-- EMPTY STATE -->
     <section class="empty-state" id="emptyState" hidden>
       <div class="empty-title">STORE OS</div>
-      <div class="empty-desc">매장을 검색해 진단을 시작하세요.</div>
+      <div class="empty-desc">오른쪽 상단에서 도로명 주소를 검색해 진단을 시작하세요.</div>
     </section>
 
     <!-- STORE INFO + MAP/PANORAMA -->
@@ -177,6 +288,105 @@ button, input { font-family: inherit; }
           </div>
         </div>
       </div>
+
+      <!-- STORE CONDITION: 진단 입력값 -->
+      <div class="condition-panel">
+        <div class="panel-label">STORE CONDITION</div>
+
+        <div class="condition-grid">
+
+          <!-- 역 접근성: 자동 계산 (Naver Geocoder + 직선거리) -->
+          <div class="condition-item">
+            <div class="condition-item-label">
+              역 접근성 (ACCESSIBILITY) <span class="val" id="accessScoreLabel">- 점</span>
+            </div>
+            <div class="station-row">
+              <input type="text" id="stationInput" class="station-input" placeholder="인접 지하철역명 (예: 강남역)" />
+              <button type="button" class="station-btn" id="stationBtn">거리 계산</button>
+            </div>
+            <div class="condition-item-sub" id="stationResult">역 이름을 입력하고 거리 계산을 눌러주세요.</div>
+          </div>
+
+          <!-- 가시성: 수동 평가 -->
+          <div class="condition-item">
+            <div class="condition-item-label">
+              가시성 (VISIBILITY) <span class="val"><span id="visibilityValue">50</span>점</span>
+            </div>
+            <input type="range" min="0" max="100" value="50" class="slider-input" id="visibilitySlider" />
+            <div class="condition-item-sub">거리뷰/지도를 보며 매장 전면 노출 정도를 0~100으로 평가</div>
+          </div>
+
+          <!-- 주차: 대수 입력 -->
+          <div class="condition-item">
+            <div class="condition-item-label">
+              주차 (PARKING) <span class="val" id="parkingScoreLabel">0 점</span>
+            </div>
+            <input type="number" min="0" class="parking-input" id="parkingInput" placeholder="주차 가능 대수" value="0" />
+            <div class="condition-item-sub">0대=0점, 10대 이상=100점 비례 환산 (예시 기준 · 확인 필요)</div>
+          </div>
+
+          <!-- 보행 접근성: 수동 평가 -->
+          <div class="condition-item">
+            <div class="condition-item-label">
+              보행 접근성 (PEDESTRIAN) <span class="val"><span id="pedestrianValue">50</span>점</span>
+            </div>
+            <input type="range" min="0" max="100" value="50" class="slider-input" id="pedestrianSlider" />
+            <div class="condition-item-sub">주 보행동선 위치 여부, 횡단보도 접근성 등을 0~100으로 평가</div>
+          </div>
+
+          <!-- 배달 접근성: 수동 평가 -->
+          <div class="condition-item">
+            <div class="condition-item-label">
+              배달 접근성 (DELIVERY) <span class="val"><span id="deliveryValue">50</span>점</span>
+            </div>
+            <input type="range" min="0" max="100" value="50" class="slider-input" id="deliverySlider" />
+            <div class="condition-item-sub">배달기사 진입·대기 편의성을 0~100으로 평가</div>
+          </div>
+
+        </div>
+
+        <button type="button" class="run-diagnosis-btn" id="runDiagnosisBtn">진단 실행</button>
+      </div>
+
+      <!-- STORE HEALTH SCORE -->
+      <div class="health-panel" id="healthPanel" hidden>
+        <div class="health-score-block">
+          <div>
+            <div class="health-score-num" id="healthScoreNum">-</div>
+            <div class="health-score-label">STORE HEALTH SCORE</div>
+          </div>
+        </div>
+        <div class="health-grade" id="healthGrade">-</div>
+        <div class="health-breakdown" id="healthBreakdown"></div>
+      </div>
+
+      <!-- STORE DIAGNOSIS -->
+      <div class="diagnosis-panel" id="diagnosisPanel" hidden>
+        <div class="panel-label">STORE DIAGNOSIS</div>
+        <div class="diagnosis-summary" id="diagnosisSummary"></div>
+
+        <div class="diagnosis-columns">
+          <div>
+            <div class="panel-label">STRENGTH</div>
+            <ul id="strengthList"></ul>
+          </div>
+          <div>
+            <div class="panel-label">ISSUE</div>
+            <ul id="issueList"></ul>
+          </div>
+        </div>
+
+        <div class="panel-label" style="margin-top:18px;">PRIORITY</div>
+        <div class="priority-list" id="priorityList"></div>
+
+        <div class="confirm-note">
+          ※ 본 진단은 OpenAI 등 AI 서술이 아닌, 입력값 기반 규칙(Rule-based) 산출 결과입니다.
+          가중치(접근성25/가시성25/주차15/보행20/배달15), 등급 컷라인(S90/A80/B70/C60/D60미만),
+          주차 환산 기준은 예시값이며 <b>원앤원 내부 기준 확정이 필요합니다.</b>
+          서술형 AI 진단(OpenAI 연동)은 Secret Key 보호를 위해 서버가 필요하며 이번 단독 실행 버전에는 포함되지 않았습니다.
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -193,7 +403,7 @@ button, input { font-family: inherit; }
  * does NOT include that call.
  *
  * What IS kept, fully working client-side, with no server:
- *   - NAVER Maps JS SDK (지도 + 마커)      -> Client ID is not a secret
+ *   - NAVER Maps JS SDK (지도 + 마커)      -> Maps Client ID is a public, domain-restricted identifier
  *     (it's a domain-restricted public identifier; the SDK requires it
  *      directly in a <script> tag even in the server-backed version).
  *   - NAVER Geocoder (주소 -> 좌표)         -> part of the Maps JS SDK,
@@ -214,7 +424,36 @@ const STORE_OS = {
   mapInstance: null,
   panoramaInstance: null,
   defaultZoom: 17,
+  // STORE CONDITION 입력값 (진단 계산에 사용)
+  condition: {
+    accessibility: null, // 역 거리 기반 자동 계산, 계산 전에는 null
+    visibility: 50,
+    parking: 0,
+    pedestrian: 50,
+    delivery: 50,
+  },
+  nearestStation: null, // { name, lat, lng, distanceMeters }
 };
+
+/* ---------- 가중치 / 등급 컷라인 (예시 기준 · 확인 필요) ----------
+ * 원앤원 내부 확정 기준이 아직 없어 기획서 원안 가중치와
+ * 임의 등급 컷라인을 그대로 사용. 확정되면 이 상수만 교체하면 된다.
+ */
+const HEALTH_WEIGHTS = {
+  accessibility: 0.25,
+  visibility: 0.25,
+  parking: 0.15,
+  pedestrian: 0.20,
+  delivery: 0.15,
+};
+
+const GRADE_CUTLINES = [
+  { grade: 'S', min: 90 },
+  { grade: 'A', min: 80 },
+  { grade: 'B', min: 70 },
+  { grade: 'C', min: 60 },
+  { grade: 'D', min: 0 },
+];
 
 const els = {};
 
@@ -230,6 +469,32 @@ function cacheEls() {
   els.storeView = document.getElementById('storeView');
   els.storeName = document.getElementById('storeName');
   els.storeAddress = document.getElementById('storeAddress');
+
+  // STORE CONDITION
+  els.stationInput = document.getElementById('stationInput');
+  els.stationBtn = document.getElementById('stationBtn');
+  els.stationResult = document.getElementById('stationResult');
+  els.accessScoreLabel = document.getElementById('accessScoreLabel');
+  els.visibilitySlider = document.getElementById('visibilitySlider');
+  els.visibilityValue = document.getElementById('visibilityValue');
+  els.parkingInput = document.getElementById('parkingInput');
+  els.parkingScoreLabel = document.getElementById('parkingScoreLabel');
+  els.pedestrianSlider = document.getElementById('pedestrianSlider');
+  els.pedestrianValue = document.getElementById('pedestrianValue');
+  els.deliverySlider = document.getElementById('deliverySlider');
+  els.deliveryValue = document.getElementById('deliveryValue');
+  els.runDiagnosisBtn = document.getElementById('runDiagnosisBtn');
+
+  // STORE HEALTH / DIAGNOSIS
+  els.healthPanel = document.getElementById('healthPanel');
+  els.healthScoreNum = document.getElementById('healthScoreNum');
+  els.healthGrade = document.getElementById('healthGrade');
+  els.healthBreakdown = document.getElementById('healthBreakdown');
+  els.diagnosisPanel = document.getElementById('diagnosisPanel');
+  els.diagnosisSummary = document.getElementById('diagnosisSummary');
+  els.strengthList = document.getElementById('strengthList');
+  els.issueList = document.getElementById('issueList');
+  els.priorityList = document.getElementById('priorityList');
 }
 
 function setStatus(message, isError) {
@@ -257,6 +522,7 @@ function handleSetupSubmit(e) {
   if (!clientId) return;
 
   STORE_OS.mapClientId = clientId;
+  localStorage.setItem('store_os_naver_maps_client_id', clientId);
   setStatus('지도 API를 불러오는 중입니다...', false);
 
   loadNaverMapsSdk(clientId)
@@ -266,10 +532,10 @@ function handleSetupSubmit(e) {
       els.emptyState.hidden = false;
       initMap();
       initPanorama();
-      setStatus(null);
+      setStatus('지도 API 연결 완료. 오른쪽 상단에서 주소를 검색하세요.', false);
     })
     .catch(() => {
-      setStatus('지도 API 연결에 실패했습니다. Client ID 또는 도메인 등록을 확인해주세요.', true);
+      setStatus('지도 API 연결에 실패했습니다. Client ID 또는 Web 서비스 URL 등록을 확인해주세요.', true);
     });
 }
 
@@ -344,6 +610,210 @@ function showNoPanorama() {
   document.getElementById('panoramaEmpty').hidden = false;
 }
 
+/* ============================================================
+   STORE CONDITION & DIAGNOSIS
+   (Rule-based. No OpenAI / no backend — see confirm-note in UI.)
+   ============================================================ */
+
+/**
+ * Haversine 직선거리 (미터).
+ * 실제 도보 경로거리가 아닌 직선거리이므로 참고값으로만 사용.
+ */
+function haversineMeters(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+/**
+ * 역까지 거리(m) -> 접근성 점수 (예시 기준 · 확인 필요).
+ * 300m 이내 100점, 이후 완만히 감소, 1500m 이상 20점 하한.
+ */
+function accessibilityScoreFromDistance(distanceMeters) {
+  if (distanceMeters <= 300) return 100;
+  if (distanceMeters <= 600) return 80;
+  if (distanceMeters <= 1000) return 60;
+  if (distanceMeters <= 1500) return 40;
+  return 20;
+}
+
+/**
+ * 주차 대수 -> 점수 (예시 기준 · 확인 필요).
+ * 0대=0점, 10대 이상=100점, 그 사이 비례.
+ */
+function parkingScoreFromCount(count) {
+  const n = Math.max(0, Number(count) || 0);
+  return Math.round(Math.min(100, (n / 10) * 100));
+}
+
+function scoreToGrade(score) {
+  for (const g of GRADE_CUTLINES) {
+    if (score >= g.min) return g.grade;
+  }
+  return 'D';
+}
+
+function handleStationLookup() {
+  const stationName = els.stationInput.value.trim();
+  if (!stationName) return;
+
+  if (!STORE_OS.currentStore) {
+    els.stationResult.textContent = '먼저 매장 주소를 검색해주세요.';
+    return;
+  }
+
+  els.stationBtn.disabled = true;
+  els.stationResult.textContent = '거리 계산 중...';
+
+  naver.maps.Service.geocode({ query: stationName }, (status, response) => {
+    els.stationBtn.disabled = false;
+
+    if (status !== naver.maps.Service.Status.OK) {
+      els.stationResult.textContent = '역 위치를 확인할 수 없습니다. 역 이름을 다시 확인해주세요.';
+      return;
+    }
+
+    const result = response.v2.addresses && response.v2.addresses[0];
+    if (!result) {
+      els.stationResult.textContent = '역 위치를 확인할 수 없습니다. 역 이름을 다시 확인해주세요.';
+      return;
+    }
+
+    const stationLat = parseFloat(result.y);
+    const stationLng = parseFloat(result.x);
+    const distance = haversineMeters(
+      STORE_OS.currentStore.lat, STORE_OS.currentStore.lng,
+      stationLat, stationLng
+    );
+    const score = accessibilityScoreFromDistance(distance);
+
+    STORE_OS.nearestStation = { name: stationName, lat: stationLat, lng: stationLng, distanceMeters: distance };
+    STORE_OS.condition.accessibility = score;
+
+    els.stationResult.textContent =
+      stationName + '(지오코딩 결과 기준)까지 직선거리 약 ' + Math.round(distance) + 'm';
+    els.accessScoreLabel.textContent = score + ' 점';
+  });
+}
+
+function refreshConditionLabels() {
+  els.visibilityValue.textContent = els.visibilitySlider.value;
+  els.pedestrianValue.textContent = els.pedestrianSlider.value;
+  els.deliveryValue.textContent = els.deliverySlider.value;
+
+  STORE_OS.condition.visibility = Number(els.visibilitySlider.value);
+  STORE_OS.condition.pedestrian = Number(els.pedestrianSlider.value);
+  STORE_OS.condition.delivery = Number(els.deliverySlider.value);
+
+  const parkingScore = parkingScoreFromCount(els.parkingInput.value);
+  STORE_OS.condition.parking = parkingScore;
+  els.parkingScoreLabel.textContent = parkingScore + ' 점';
+}
+
+/**
+ * CATEGORY 라벨: STORE HEALTH 항목명을 기획서 §28 RECOMMENDATION
+ * CATEGORY(SIGNAGE/WINDOW GRAPHIC/PARKING/ENTRANCE/DELIVERY ACCESS)로 매핑.
+ */
+const CATEGORY_META = {
+  accessibility: { label: '역 접근성', recCategory: 'ENTRANCE', recTitle: '진입 동선 개선', recAction: '역 방향 보행 동선 상의 사인/유도 요소 보강을 검토합니다.' },
+  visibility: { label: '가시성', recCategory: 'SIGNAGE / WINDOW GRAPHIC', recTitle: '돌출사인 및 윈도우 그래픽 강화', recAction: '전면 유리 그래픽 및 돌출사인으로 원거리 인지도를 높이는 방안을 검토합니다.' },
+  parking: { label: '주차', recCategory: 'PARKING', recTitle: '주차 동선/대수 개선', recAction: '주차 공간 확보 또는 인근 제휴 주차장 안내 강화를 검토합니다.' },
+  pedestrian: { label: '보행 접근성', recCategory: 'ENTRANCE', recTitle: '보행 진입성 개선', recAction: '주 보행동선과의 연결성, 횡단보도 접근 동선을 재검토합니다.' },
+  delivery: { label: '배달 접근성', recCategory: 'DELIVERY ACCESS', recTitle: '배달 픽업존 개선', recAction: '배달기사 전용 진입/대기 공간 표시 및 동선 분리를 검토합니다.' },
+};
+
+function runDiagnosis() {
+  if (!STORE_OS.currentStore) {
+    setStatus('먼저 매장 주소를 검색해주세요.', true);
+    return;
+  }
+
+  refreshConditionLabels();
+
+  if (STORE_OS.condition.accessibility === null) {
+    setStatus('역 접근성 계산이 필요합니다. 인접 지하철역명을 입력하고 거리 계산을 눌러주세요.', true);
+    return;
+  }
+
+  const c = STORE_OS.condition;
+  const weightedScore =
+    c.accessibility * HEALTH_WEIGHTS.accessibility +
+    c.visibility * HEALTH_WEIGHTS.visibility +
+    c.parking * HEALTH_WEIGHTS.parking +
+    c.pedestrian * HEALTH_WEIGHTS.pedestrian +
+    c.delivery * HEALTH_WEIGHTS.delivery;
+
+  const healthScore = Math.round(weightedScore);
+  const grade = scoreToGrade(healthScore);
+
+  els.healthPanel.hidden = false;
+  els.healthScoreNum.textContent = healthScore;
+  els.healthGrade.textContent = grade;
+  els.healthBreakdown.innerHTML =
+    '<span>접근성 <b>' + c.accessibility + '</b></span>' +
+    '<span>가시성 <b>' + c.visibility + '</b></span>' +
+    '<span>주차 <b>' + c.parking + '</b></span>' +
+    '<span>보행 <b>' + c.pedestrian + '</b></span>' +
+    '<span>배달 <b>' + c.delivery + '</b></span>';
+
+  // 강점/이슈: 규칙 기반 (score >= 80 강점, score < 60 이슈)
+  const categories = ['accessibility', 'visibility', 'parking', 'pedestrian', 'delivery'];
+  const strengths = categories.filter((k) => c[k] >= 80);
+  const issues = categories.filter((k) => c[k] < 60);
+
+  els.strengthList.innerHTML = strengths.length
+    ? strengths.map((k) => '<li>' + CATEGORY_META[k].label + ' 우수 (' + c[k] + '점)</li>').join('')
+    : '<li>80점 이상 항목이 없습니다.</li>';
+
+  els.issueList.innerHTML = issues.length
+    ? issues.map((k) => '<li>' + CATEGORY_META[k].label + ' 개선 필요 (' + c[k] + '점)</li>').join('')
+    : '<li>60점 미만 항목이 없습니다.</li>';
+
+  // 요약문: 기획서 §25 AI SYSTEM PROMPT 톤 유지 (단정 대신 "검토 필요/가능성" 표현)
+  const stationText = STORE_OS.nearestStation
+    ? STORE_OS.nearestStation.name + '까지 약 ' + Math.round(STORE_OS.nearestStation.distanceMeters) + 'm'
+    : '역 거리 미확인';
+
+  els.diagnosisSummary.textContent =
+    'STORE HEALTH ' + healthScore + '점(' + grade + '등급)으로 산출됨. ' + stationText + ' 기준 역 접근성 ' + c.accessibility + '점. ' +
+    (issues.length
+      ? issues.map((k) => CATEGORY_META[k].label).join(', ') + ' 항목이 상대적으로 낮아 개선 여지가 있는 것으로 검토됨.'
+      : '5개 평가 항목 모두 60점 이상으로 큰 취약 항목은 확인되지 않음.');
+
+  // 우선순위: 점수 낮은 순 최대 3개
+  const ranked = categories
+    .slice()
+    .sort((a, b) => c[a] - c[b])
+    .slice(0, 3);
+
+  els.priorityList.innerHTML = ranked
+    .map((k, idx) => {
+      const meta = CATEGORY_META[k];
+      return (
+        '<div class="priority-item">' +
+        '<div class="priority-rank">' + String(idx + 1).padStart(2, '0') + '</div>' +
+        '<div class="priority-body">' +
+        '<span class="ptitle">' + meta.recTitle + '</span>' +
+        '<span class="pcategory">' + meta.recCategory + '</span>' +
+        '<div class="preason">' + meta.label + ' ' + c[k] + '점으로 5개 항목 중 상대적으로 낮음.</div>' +
+        '<div class="paction"><b>제안:</b> ' + meta.recAction + '</div>' +
+        '</div>' +
+        '</div>'
+      );
+    })
+    .join('');
+
+  els.diagnosisPanel.hidden = false;
+  setStatus(null);
+}
+
 /* ---------- SEARCH (client-side geocoding, no backend) ---------- */
 
 function showStoreView(name, address) {
@@ -351,6 +821,15 @@ function showStoreView(name, address) {
   els.storeView.hidden = false;
   els.storeName.textContent = name;
   els.storeAddress.textContent = address;
+
+  // 매장이 바뀌면 이전 매장 기준 역 접근성/진단 결과는 무효화
+  STORE_OS.condition.accessibility = null;
+  STORE_OS.nearestStation = null;
+  els.accessScoreLabel.textContent = '- 점';
+  els.stationInput.value = '';
+  els.stationResult.textContent = '역 이름을 입력하고 거리 계산을 눌러주세요.';
+  els.healthPanel.hidden = true;
+  els.diagnosisPanel.hidden = true;
 }
 
 function handleSearchSubmit(e) {
@@ -396,8 +875,21 @@ function handleSearchSubmit(e) {
 
 function init() {
   cacheEls();
+
+  const savedClientId = localStorage.getItem('store_os_naver_maps_client_id');
+  if (savedClientId) {
+    els.clientIdInput.value = savedClientId;
+  }
+
   els.setupForm.addEventListener('submit', handleSetupSubmit);
   els.searchForm.addEventListener('submit', handleSearchSubmit);
+
+  els.stationBtn.addEventListener('click', handleStationLookup);
+  els.visibilitySlider.addEventListener('input', refreshConditionLabels);
+  els.pedestrianSlider.addEventListener('input', refreshConditionLabels);
+  els.deliverySlider.addEventListener('input', refreshConditionLabels);
+  els.parkingInput.addEventListener('input', refreshConditionLabels);
+  els.runDiagnosisBtn.addEventListener('click', runDiagnosis);
 }
 
 document.addEventListener('DOMContentLoaded', init);
