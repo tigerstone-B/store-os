@@ -480,12 +480,12 @@ function accessibilityScoreFromDistance(m) {
   return 20;
 }
 
-function autoFindNearestStation(lat, lng) {
+function autoFindNearestStation(lat, lng, address) {
   els.stationResult.className = 'station-auto-result loading';
   els.stationResult.innerHTML = '주변 지하철역 자동 검색 중...';
   els.accessScoreLabel.textContent = '- 점';
 
-  fetch('/api/station-search?lat=' + lat + '&lng=' + lng)
+  fetch('/api/station-search?lat=' + lat + '&lng=' + lng + '&address=' + encodeURIComponent(address || ''))
     .then(res => { if (!res.ok) throw new Error('STATION_SEARCH_FAILED'); return res.json(); })
     .then(data => {
       if (!data.station) {
@@ -543,7 +543,7 @@ function handleSearch() {
     showStoreView(query, displayAddress);
     placeStoreMarker(lat, lng, query);
     showStorePanorama(lat, lng);
-    autoFindNearestStation(lat, lng);
+    autoFindNearestStation(lat, lng, displayAddress);
   });
 }
 
