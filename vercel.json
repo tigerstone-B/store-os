@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/ai-visual-diagnosis.js": {
+      "maxDuration": 30
+    },
+    "api/station-search.js": {
+      "maxDuration": 15
+    }
+  }
+}
