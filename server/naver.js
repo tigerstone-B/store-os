@@ -1,6 +1,16 @@
 /**
  * STORE OS - naver.js
- * NAVER Local Search API 프록시. 현재 프론트엔드는 미사용 (확장용).
+ * Thin wrapper around NAVER Local Search API (검색 > 지역).
+ *
+ * Docs: https://developers.naver.com/docs/serviceapi/search/local/local.md
+ *
+ * NOTE on coordinates: this API's mapx/mapy fields are NOT plain WGS84
+ * lat/lng (they use an internal projected coordinate system and have
+ * changed format across API versions), so we deliberately do NOT trust
+ * them for marker placement. Instead the frontend geocodes the returned
+ * address via naver.maps.Service.geocode (Maps JS geocoder submodule),
+ * which reliably returns WGS84 coordinates. This module only returns
+ * title/category/address/roadAddress.
  */
 
 const NAVER_LOCAL_SEARCH_URL = 'https://openapi.naver.com/v1/search/local.json';
